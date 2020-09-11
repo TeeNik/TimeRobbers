@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,94 +10,126 @@ public class InputController : MonoBehaviour
 
     public float runSpeed = 40f;
 
-    float horizontalMove = 0f;
-    bool jump = false;
-
     private CharacterController _copy = null;
     private float _time = 0;
     private float _spawnTime = 0;
 
-    private enum Action
+    [Flags]
+    private enum  Action
     {
-        None,
-        Left,
-        Right
+        Empty = 0,
+        Stay = 1,
+        Left = 2,
+        Right = 4,
+        Jump = 8,
     }
 
-    private Queue<KeyValuePair<float, float>> _history = new Queue<KeyValuePair<float, float>>();
-    private Dictionary<float, float> _actions = new Dictionary<float, float>();
-    private float _last = -1;
+    private Queue<KeyValuePair<float, Action>> _history = new Queue<KeyValuePair<float, Action>>();
 
-
-    private bool _inUpdate = true;
-
-    void HandleInput()
+    private struct InputState
     {
-        horizontalMove = Input.GetAxisRaw("Horizontal") * runSpeed;
-        print(horizontalMove);
+        public bool Left;
+        public bool Right;
+        public bool Jump;
+        public bool Copy;
 
-        if (Input.GetButtonDown("Jump"))
+        public void Clear()
         {
-            jump = true;
+            Left = false;
+            Right = false;
+            Jump = false;
+            Copy = false;
         }
 
-        if (Input.GetKeyDown(KeyCode.LeftShift))
+        public bool NeedRecord()
         {
-            _inUpdate = !_inUpdate;
-            print("inUpdate: " + _inUpdate);
+            return Left || Right || Jump;
+        }
+    }
 
+    private InputState _input = new InputState();
+    private Action _action;
+    private Action _last = Action.Empty;
+
+    private float ActionToSpeed(Action action)
+    {
+        var horizontalMove = 0f;
+        if (action.HasFlag(Action.Left))
+        {
+            horizontalMove -= runSpeed;
+        }
+        if (action.HasFlag(Action.Right))
+        {
+            horizontalMove += runSpeed;
+        }
+        return horizontalMove;
+    }
+
+    void Update()
+    {
+
+        print("A: " + Input.GetKey(KeyCode.A));
+
+        if (!_input.Left && Input.GetKey(KeyCode.A))
+        {
+            _input.Left = true;
+            _action |= Action.Left;
+        }
+        if (!_input.Right && Input.GetKey(KeyCode.D))
+        {
+            _input.Right = true;
+            _action |= Action.Right;
+        }
+        if (!_input.Jump && Input.GetButtonDown("Jump"))
+        {
+            _input.Jump = true;
+            _action |= Action.Jump;
+        }
+        if (!_input.Copy && Input.GetKeyDown(KeyCode.R))
+        {
+            _input.Copy = true;
+        }
+    }
+
+    private float _copySpeed = 0;
+
+    void FixedUpdate()
+    {
+        if (_last != _action)
+        {
+            _history.Enqueue(new KeyValuePair<float, Action>(_time, _action));
+            _last = _action;
         }
 
-        if (_last != horizontalMove)
-        {
-            _actions.Add(_time, horizontalMove);
-            _history.Enqueue(new KeyValuePair<float, float>(_time, horizontalMove));
-            _last = horizontalMove;
-            //print(_time + "  " + horizontalMove);
-        }
-
-        if (Input.GetKeyDown(KeyCode.R))
+        if (_input.Copy)
         {
             var pos = transform.position;
             pos.x = 0;
             _copy = Instantiate(copyPrefab, pos, transform.rotation);
             _spawnTime = _time;
         }
-        _time += Time.deltaTime;
-    }
+        controller.Move(ActionToSpeed(_action) * Time.fixedDeltaTime, _input.Jump);
 
-    void Update()
-    {
-        if (_inUpdate)
-        {
-            HandleInput();
-        }
-
-    }
-
-    private float _copySpeed = 0;
-    void FixedUpdate()
-    {
-        if (!_inUpdate)
-        {
-            HandleInput();
-        }
-
-        controller.Move(horizontalMove * Time.fixedDeltaTime, jump);
-        jump = false;
+        _input.Clear();
+        _action = Action.Empty;
 
         if (_copy != null)
         {
+            var copySpeed = 0f;
+            var jump = false;
             if (_history.Count > 0)
             {
                 var first = _history.Peek();
                 if (first.Key <= _time - _spawnTime)
                 {
                     _history.Dequeue();
-                    _copySpeed = first.Value;
+                    _copySpeed = ActionToSpeed(first.Value);
+                    jump = first.Value.HasFlag(Action.Jump);
                 }
             }
-            _copy.Move(_copySpeed * Time.fixedDeltaTime, false);
+            _copy.Move(_copySpeed * Time.fixedDeltaTime, jump);
         }
+
+        _time += Time.fixedDeltaTime;
     }
 }
