@@ -487,7 +487,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _jumpForce: 400
   _movementSmoothing: 0.05
-  _airControl: 0
+  _airControl: 1
   _whatIsGround:
     serializedVersion: 2
     m_Bits: 55
@@ -1265,8 +1265,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1765014509}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.165, y: 0, z: 0}
-  m_LocalScale: {x: 16.390265, y: 1, z: 1}
+  m_LocalPosition: {x: -0.611, y: 0, z: 0}
+  m_LocalScale: {x: 25.851593, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3

@@ -224,7 +224,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _jumpForce: 400
   _movementSmoothing: 0.05
-  _airControl: 0
+  _airControl: 1
   _whatIsGround:
     serializedVersion: 2
     m_Bits: 55
