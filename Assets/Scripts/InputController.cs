@@ -69,6 +69,7 @@ public class InputController : MonoBehaviour
     {
 
         print("A: " + Input.GetKey(KeyCode.A));
+        print("D: " + Input.GetKey(KeyCode.D));
 
         if (!_input.Left && Input.GetKey(KeyCode.A))
         {
@@ -80,7 +81,7 @@ public class InputController : MonoBehaviour
             _input.Right = true;
             _action |= Action.Right;
         }
-        if (!_input.Jump && Input.GetButtonDown("Jump"))
+        if (!_input.Jump && Input.GetKeyDown(KeyCode.W))
         {
             _input.Jump = true;
             _action |= Action.Jump;
@@ -97,6 +98,7 @@ public class InputController : MonoBehaviour
     {
         if (_last != _action)
         {
+            //print("put in queue: " + _time + "  " + _action);
             _history.Enqueue(new KeyValuePair<float, Action>(_time, _action));
             _last = _action;
         }
