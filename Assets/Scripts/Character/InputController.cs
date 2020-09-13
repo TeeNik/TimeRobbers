@@ -22,32 +22,11 @@ public class InputController : MonoBehaviour
         Left = 2,
         Right = 4,
         Jump = 8,
+        Copy = 16,
     }
 
     private Queue<KeyValuePair<float, Action>> _history = new Queue<KeyValuePair<float, Action>>();
 
-    private struct InputState
-    {
-        public bool Left;
-        public bool Right;
-        public bool Jump;
-        public bool Copy;
-
-        public void Clear()
-        {
-            Left = false;
-            Right = false;
-            Jump = false;
-            Copy = false;
-        }
-
-        public bool NeedRecord()
-        {
-            return Left || Right || Jump;
-        }
-    }
-
-    private InputState _input = new InputState();
     private Action _action;
     private Action _last = Action.Empty;
 
@@ -67,28 +46,21 @@ public class InputController : MonoBehaviour
 
     void Update()
     {
-
-        print("A: " + Input.GetKey(KeyCode.A));
-        print("D: " + Input.GetKey(KeyCode.D));
-
-        if (!_input.Left && Input.GetKey(KeyCode.A))
+        if (!_action.HasFlag(Action.Left) && Input.GetKey(KeyCode.A))
         {
-            _input.Left = true;
             _action |= Action.Left;
         }
-        if (!_input.Right && Input.GetKey(KeyCode.D))
+        if (!_action.HasFlag(Action.Right) && Input.GetKey(KeyCode.D))
         {
-            _input.Right = true;
             _action |= Action.Right;
         }
-        if (!_input.Jump && Input.GetKeyDown(KeyCode.W))
+        if (!_action.HasFlag(Action.Jump) && Input.GetKeyDown(KeyCode.W))
         {
-            _input.Jump = true;
             _action |= Action.Jump;
         }
-        if (!_input.Copy && Input.GetKeyDown(KeyCode.R))
+        if (!_action.HasFlag(Action.Copy) && Input.GetKeyDown(KeyCode.R))
         {
-            _input.Copy = true;
+            _action |= Action.Copy;
         }
     }
 
@@ -98,21 +70,19 @@ public class InputController : MonoBehaviour
     {
         if (_last != _action)
         {
-            //print("put in queue: " + _time + "  " + _action);
             _history.Enqueue(new KeyValuePair<float, Action>(_time, _action));
             _last = _action;
         }
 
-        if (_input.Copy)
+        if (_action.HasFlag(Action.Copy))
         {
             var pos = transform.position;
             pos.x = 0;
             _copy = Instantiate(copyPrefab, pos, transform.rotation);
             _spawnTime = _time;
         }
-        controller.Move(ActionToSpeed(_action) * Time.fixedDeltaTime, _input.Jump);
+        controller.Move(ActionToSpeed(_action) * Time.fixedDeltaTime, _action.HasFlag(Action.Jump));
 
-        _input.Clear();
         _action = Action.Empty;
 
         if (_copy != null)

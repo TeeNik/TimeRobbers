@@ -54,6 +54,11 @@ public class CharacterController : MonoBehaviour
         }
     }
 
+    public void AddJumpForce(float multiplier)
+    {
+        _rigidbody2D.AddForce(new Vector2(0f, _jumpForce * multiplier));
+    }
+
 
     private void Flip()
     {
