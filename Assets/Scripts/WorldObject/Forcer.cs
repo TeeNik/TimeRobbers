@@ -14,20 +14,8 @@ public class Forcer : MonoBehaviour
 
     private GameObject _target;
     private bool _movingForward;
-    private bool _movingBackward;
 
     private TweenerCore<Vector3, Vector3, VectorOptions> _tween;
-
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     void OnCollisionEnter2D(Collision2D collision)
     {
@@ -49,12 +37,7 @@ public class Forcer : MonoBehaviour
                     var character = _target.GetComponent<CharacterController>();
                     character.AddJumpForce(3);
                 }
-
-                _movingBackward = false;
-                _tween = transform.DOMove(_startPos.position, 3).OnComplete(() =>
-                {
-                    _movingBackward = false;
-                });
+                _tween = transform.DOMove(_startPos.position, 3);
             });
         }
     }
