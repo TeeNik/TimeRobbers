@@ -13,9 +13,10 @@ public class InputController : MonoBehaviour
     private CharacterController _copy = null;
     private float _time = 0;
     private float _spawnTime = 0;
+    private bool _isRecording = true;
 
     [Flags]
-    private enum  Action
+    public enum  Action
     {
         Empty = 0,
         Stay = 1,
@@ -46,21 +47,31 @@ public class InputController : MonoBehaviour
 
     void Update()
     {
-        if (!_action.HasFlag(Action.Left) && Input.GetKey(KeyCode.A))
+        if (_isRecording)
         {
-            _action |= Action.Left;
+            if (!_action.HasFlag(Action.Left) && Input.GetKey(KeyCode.A))
+            {
+                _action |= Action.Left;
+            }
+            if (!_action.HasFlag(Action.Right) && Input.GetKey(KeyCode.D))
+            {
+                _action |= Action.Right;
+            }
+            if (!_action.HasFlag(Action.Jump) && Input.GetKeyDown(KeyCode.W))
+            {
+                _action |= Action.Jump;
+            }
+            if (!_action.HasFlag(Action.Copy) && Input.GetKeyDown(KeyCode.R))
+            {
+                _action |= Action.Copy;
+            }
         }
-        if (!_action.HasFlag(Action.Right) && Input.GetKey(KeyCode.D))
+
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            _action |= Action.Right;
-        }
-        if (!_action.HasFlag(Action.Jump) && Input.GetKeyDown(KeyCode.W))
-        {
-            _action |= Action.Jump;
-        }
-        if (!_action.HasFlag(Action.Copy) && Input.GetKeyDown(KeyCode.R))
-        {
-            _action |= Action.Copy;
+            _isRecording = false;
+            PlanningStage.Instance.Save(_history);
+            Destroy(gameObject);
         }
     }
 
