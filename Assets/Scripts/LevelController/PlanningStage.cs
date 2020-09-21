@@ -7,6 +7,9 @@ public class PlanningStage : MonoBehaviour
 
     [SerializeField] private PlanningView _view;
 
+    [SerializeField] private CharacterController _charPrefab;
+    [SerializeField] private Transform _spawnPoint;
+
     public struct TurnInfo
     {
         public float Speed;
@@ -14,7 +17,7 @@ public class PlanningStage : MonoBehaviour
         public Queue<KeyValuePair<float, InputController.Action>> History;
     }
 
-    private List<TurnInfo> turns = new List<TurnInfo>();
+    private List<TurnInfo> _turns = new List<TurnInfo>();
     private bool _isPlaying = false;
 
     private float _time = 0;
@@ -33,30 +36,59 @@ public class PlanningStage : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 Debug.Log("Cleared");
-                turns.Clear();
+                _turns.Clear();
                 _view.SetNumberOfRecords(0);
             }
 
             if (Input.GetKeyDown(KeyCode.Return))
             {
                 _isPlaying = true;
-                foreach (var turn in turns)
+                for (var i = 0; i < _turns.Count; ++i)
                 {
-                    turn.Character =
+                    var turn = _turns[i];
+                    turn.Character = Instantiate(_charPrefab, _spawnPoint) as CharacterController;
                 }
             }
         }
-        else
+    }
+
+    private float runSpeed = 40;
+    private float ActionToSpeed(InputController.Action action)
+    {
+        var horizontalMove = 0f;
+        if (action.HasFlag(InputController.Action.Left))
         {
-            
+            horizontalMove -= runSpeed;
         }
+        if (action.HasFlag(InputController.Action.Right))
+        {
+            horizontalMove += runSpeed;
+        }
+        return horizontalMove;
     }
 
     void FixedUpdate()
     {
         if (_isPlaying)
         {
+            for (var i = 0; i < _turns.Count; ++i)
+            {
+                var turn = _turns[i];
+                var jump = false;
+                if (turn.History.Count > 0)
+                {
+                    var first = turn.History.Peek();
+                    if (first.Key <= _time /* - _spawnTime*/)
+                    {
+                        turn.History.Dequeue();
+                        turn.Speed = ActionToSpeed(first.Value);
+                        jump = first.Value.HasFlag(InputController.Action.Jump);
+                    }
+                }
+                turn.Character.Move(turn.Speed * Time.fixedDeltaTime, jump);
+            }
 
+            _time += Time.fixedDeltaTime;
         }
     }
 
@@ -65,7 +97,7 @@ public class PlanningStage : MonoBehaviour
     {
         var item = new TurnInfo();
         item.History = history;
-        turns.Add(item);
+        _turns.Add(item);
     }
 
  }
