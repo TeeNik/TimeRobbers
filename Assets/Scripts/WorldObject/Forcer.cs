@@ -34,7 +34,7 @@ public class Forcer : MonoBehaviour
                 _movingForward = false;
                 if (_target != null)
                 {
-                    var character = _target.GetComponent<CharacterController>();
+                    var character = _target.GetComponent<CharacterMovement>();
                     character.AddJumpForce(3);
                 }
                 _tween = transform.DOMove(_startPos.position, 3);

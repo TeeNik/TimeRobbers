@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterController : MonoBehaviour
+public class CharacterMovement : MonoBehaviour
 {
     [SerializeField] private float _jumpForce = 400f;
     [Range(0, .3f)] [SerializeField] private float _movementSmoothing = .05f;

@@ -7,13 +7,16 @@ public class PlanningStage : MonoBehaviour
 
     [SerializeField] private PlanningView _view;
 
-    [SerializeField] private CharacterController _charPrefab;
+    [SerializeField] private CharacterMovement _charPrefab;
     [SerializeField] private Transform _spawnPoint;
+    [SerializeField] private BaseCharacter[] _characters;
 
-    public struct TurnInfo
+    private int _characterIndex = 0;
+
+    public class TurnInfo
     {
         public float Speed;
-        public CharacterController Character;
+        public CharacterMovement Character;
         public Queue<KeyValuePair<float, InputController.Action>> History;
     }
 
@@ -27,6 +30,7 @@ public class PlanningStage : MonoBehaviour
     void Start()
     {
         Instance = this;
+        _view.SetVisibility(true);
     }
 
     void Update()
@@ -40,13 +44,20 @@ public class PlanningStage : MonoBehaviour
                 _view.SetNumberOfRecords(0);
             }
 
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                _view.SetVisibility(false);
+                CharacterMovement character = Instantiate(_charPrefab, _spawnPoint.position, Quaternion.identity) as CharacterMovement;
+            }
+
             if (Input.GetKeyDown(KeyCode.Return))
             {
                 _isPlaying = true;
                 for (var i = 0; i < _turns.Count; ++i)
                 {
-                    var turn = _turns[i];
-                    turn.Character = Instantiate(_charPrefab, _spawnPoint) as CharacterController;
+                    CharacterMovement character = Instantiate(_charPrefab, _spawnPoint.position, Quaternion.identity) as CharacterMovement;
+                    character.GetComponent<InputController>().enabled = false;
+                    _turns[i].Character = character;
                 }
             }
         }
@@ -92,12 +103,13 @@ public class PlanningStage : MonoBehaviour
         }
     }
 
-
     public void Save(Queue<KeyValuePair<float, InputController.Action>> history)
     {
         var item = new TurnInfo();
         item.History = history;
         _turns.Add(item);
+        _view.SetNumberOfRecords(_turns.Count);
+        _view.SetVisibility(true);
     }
 
  }

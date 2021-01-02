@@ -5,7 +5,7 @@ using UnityEngine;
 public class BaseCharacter : MonoBehaviour
 {
 
-    [SerializeField] private CharacterController _characterController;
+    [SerializeField] private CharacterMovement _characterMovement;
     [SerializeField] private InputController _inputController;
 
     private HealthComponent _health;

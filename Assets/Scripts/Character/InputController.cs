@@ -5,12 +5,12 @@ using UnityEngine;
 
 public class InputController : MonoBehaviour
 {
-    public CharacterController controller;
-    public CharacterController copyPrefab;
+    public CharacterMovement Movement;
+    public CharacterMovement copyPrefab;
 
     public float runSpeed = 40f;
 
-    private CharacterController _copy = null;
+    private CharacterMovement _copy = null;
     private float _time = 0;
     private float _spawnTime = 0;
     private bool _isRecording = true;
@@ -67,7 +67,7 @@ public class InputController : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.LeftShift))
         {
             _isRecording = false;
             PlanningStage.Instance.Save(_history);
@@ -92,13 +92,12 @@ public class InputController : MonoBehaviour
             _copy = Instantiate(copyPrefab, pos, transform.rotation);
             _spawnTime = _time;
         }
-        controller.Move(ActionToSpeed(_action) * Time.fixedDeltaTime, _action.HasFlag(Action.Jump));
+        Movement.Move(ActionToSpeed(_action) * Time.fixedDeltaTime, _action.HasFlag(Action.Jump));
 
         _action = Action.Empty;
 
         if (_copy != null)
         {
-            var copySpeed = 0f;
             var jump = false;
             if (_history.Count > 0)
             {
