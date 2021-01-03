@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class TimeSpeedComponent : MonoBehaviour
+public class SpeedComponent : MonoBehaviour
 {
     public float TimeScale = 1.0f;
 }

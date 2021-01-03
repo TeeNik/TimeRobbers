@@ -4,13 +4,15 @@ using UnityEngine;
 
 public class CharacterMovement : MonoBehaviour
 {
-    [SerializeField] private float _jumpForce = 400f;
+    [SerializeField] private float _jumpForce = 700f;
     [Range(0, .3f)] [SerializeField] private float _movementSmoothing = .05f;
     [SerializeField] private bool _airControl = false;
     [SerializeField] private LayerMask _whatIsGround;
     [SerializeField] private Transform _groundCheck;
     [SerializeField] private Transform _ceilingCheck;
     [SerializeField] private float _runSpeed = 40f;
+
+    [SerializeField] private GroundCollider _groundCollider;
 
     const float _groundedRadius = .2f;
     private bool _grounded;
@@ -29,14 +31,15 @@ public class CharacterMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        _grounded = false;
-
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(_groundCheck.position, _groundedRadius, _whatIsGround);
-        for (int i = 0; i < colliders.Length; i++)
-        {
-            if (colliders[i].gameObject != gameObject)
-                _grounded = true;
-        }
+        _grounded = _groundCollider.IsTouchingGround;
+        //_grounded = false;
+        //
+        //Collider2D[] colliders = Physics2D.OverlapCircleAll(_groundCheck.position, _groundedRadius, _whatIsGround);
+        //for (int i = 0; i < colliders.Length; i++)
+        //{
+        //    if (colliders[i].gameObject != gameObject)
+        //        _grounded = true;
+        //}
     }
 
     public void Move(float move, bool jump)

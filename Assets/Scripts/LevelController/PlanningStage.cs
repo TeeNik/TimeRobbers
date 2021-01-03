@@ -26,14 +26,20 @@ public class PlanningStage : MonoBehaviour
     private readonly List<TurnInfo> _turns = new List<TurnInfo>();
     private readonly List<ReplayInfo> _replays = new List<ReplayInfo>();
 
+    private List<ReplayUpdateComponent> _replayUpdatesComponents = new List<ReplayUpdateComponent>();
+
     private bool _isPlaying = false;
     private float _time = 0;
 
     public static PlanningStage Instance { get; private set; }
 
-    void Start()
+    void Awake()
     {
         Instance = this;
+    }
+
+    void Start()
+    {
         _view.SetVisibility(true);
     }
 
@@ -140,8 +146,18 @@ public class PlanningStage : MonoBehaviour
             replay.Character.InputController.enabled = false;
             _replays.Add(replay);
         }
+
+        foreach (var component in _replayUpdatesComponents)
+        {
+            component.OnBeforeReplay();
+        }
+
         _time = 0;
         _isPlaying = true;
     }
 
+    public void RegisterReplayUpdateComponent(ReplayUpdateComponent component)
+    {
+        _replayUpdatesComponents.Add(component);
+    }
  }

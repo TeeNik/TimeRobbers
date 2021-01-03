@@ -1,48 +1,66 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using DG.Tweening;
-using DG.Tweening.Core;
-using DG.Tweening.Plugins.Options;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Forcer : MonoBehaviour
 {
-
     [SerializeField] private Transform _startPos;
     [SerializeField] private Transform _endPos;
 
+    private SpeedComponent _speedComponent;
 
     private GameObject _target;
     private bool _movingForward;
+    private bool _movingBackward;
 
-    private TweenerCore<Vector3, Vector3, VectorOptions> _tween;
+    private Vector3 _translateVector;
 
-    void OnCollisionEnter2D(Collision2D collision)
+    void Awake()
     {
-        if (!_movingForward)
-        {
-            if (_tween.IsActive())
-            {
-                _tween.Kill();
-            }
-            _movingForward = true;
-            _target = collision.gameObject;
-            _target.transform.parent = transform;
+        _speedComponent = GetComponent<SpeedComponent>();
+    }
 
-            _tween = transform.DOMove(_endPos.position, .25f).SetEase(Ease.InCubic).OnComplete(() =>
+    void FixedUpdate()
+    {
+        if (_movingForward)
+        {
+            transform.Translate(_translateVector * Time.fixedDeltaTime * 12 * _speedComponent.TimeScale);
+
+            if (transform.position.y >= _endPos.position.y)
             {
                 _movingForward = false;
+                _movingBackward = true;
+                _translateVector = _startPos.position - transform.position;
                 if (_target != null)
                 {
                     var character = _target.GetComponent<CharacterMovement>();
                     character.AddJumpForce(3);
                 }
-                _tween = transform.DOMove(_startPos.position, 3);
-            });
+            }
+        }
+        else if (_movingBackward)
+        {
+            transform.Translate(_translateVector * Time.fixedDeltaTime * 2f * _speedComponent.TimeScale);
+            if (transform.position.y <= _startPos.position.y)
+            {
+                _movingBackward = false;
+            }
         }
     }
 
-    void OnCollisionExit2D(Collision2D collision)
+    void OnTriggerEnter2D(Collider2D collider)
+    {
+        if (collider.gameObject.tag == StringTags.GroundCheck)
+        {
+            if (!_movingForward)
+            {
+                _translateVector = _endPos.position - transform.position;
+                _movingForward = true;
+                _target = collider.transform.parent.gameObject;
+                _target.transform.parent = transform;
+            }
+        }
+    }
+
+    void OnTriggerExit2D(Collider2D collider)
     {
         if (_target != null)
         {

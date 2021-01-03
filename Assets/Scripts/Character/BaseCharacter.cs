@@ -40,7 +40,7 @@ public class BaseCharacter : MonoBehaviour
 
     protected virtual void HandleCollision(Collider2D collider)
     {
-        if (collider.gameObject.CompareTag(StringTags.Danger))
+        if (collider.gameObject.CompareTag(StringTags.Danger) && !IsDead)
         {
             //TODO refactor messing with recording
             if (InputController.enabled)
