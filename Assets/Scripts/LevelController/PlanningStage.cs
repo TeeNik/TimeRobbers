@@ -1,28 +1,32 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class PlanningStage : MonoBehaviour
 {
+    private class TurnInfo
+    {
+        public int CharacterType;
+        public List<KeyValuePair<float, InputController.Action>> History;
+    }
+
+    private class ReplayInfo
+    {
+        public float Speed;
+        public BaseCharacter Character;
+        public int TurnIndex;
+    }
+
 
     [SerializeField] private PlanningView _view;
-
-    [SerializeField] private CharacterMovement _charPrefab;
     [SerializeField] private Transform _spawnPoint;
     [SerializeField] private BaseCharacter[] _characters;
 
-    private int _characterIndex = 0;
+    private int _characterType = 0;
 
-    public class TurnInfo
-    {
-        public float Speed;
-        public CharacterMovement Character;
-        public Queue<KeyValuePair<float, InputController.Action>> History;
-    }
+    private readonly List<TurnInfo> _turns = new List<TurnInfo>();
+    private readonly List<ReplayInfo> _replays = new List<ReplayInfo>();
 
-    private List<TurnInfo> _turns = new List<TurnInfo>();
     private bool _isPlaying = false;
-
     private float _time = 0;
 
     public static PlanningStage Instance { get; private set; }
@@ -46,36 +50,26 @@ public class PlanningStage : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                _view.SetVisibility(false);
-                CharacterMovement character = Instantiate(_charPrefab, _spawnPoint.position, Quaternion.identity) as CharacterMovement;
+               Instantiate(_characters[_characterType], _spawnPoint.position, Quaternion.identity);
+               PrepareReplay();
             }
 
             if (Input.GetKeyDown(KeyCode.Return))
             {
-                _isPlaying = true;
-                for (var i = 0; i < _turns.Count; ++i)
-                {
-                    CharacterMovement character = Instantiate(_charPrefab, _spawnPoint.position, Quaternion.identity) as CharacterMovement;
-                    character.GetComponent<InputController>().enabled = false;
-                    _turns[i].Character = character;
-                }
+                PrepareReplay();
+            }
+
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                _characterType = _characterType == 0 ? _characters.Length - 1 : _characterType - 1;
+                Debug.Log(_characters[_characterType].name);
+            }
+            else if (Input.GetKeyDown(KeyCode.D))
+            {
+                _characterType = _characterType == _characters.Length - 1 ? 0 : _characterType + 1;
+                Debug.Log(_characters[_characterType].name);
             }
         }
-    }
-
-    private float runSpeed = 40;
-    private float ActionToSpeed(InputController.Action action)
-    {
-        var horizontalMove = 0f;
-        if (action.HasFlag(InputController.Action.Left))
-        {
-            horizontalMove -= runSpeed;
-        }
-        if (action.HasFlag(InputController.Action.Right))
-        {
-            horizontalMove += runSpeed;
-        }
-        return horizontalMove;
     }
 
     void FixedUpdate()
@@ -85,31 +79,69 @@ public class PlanningStage : MonoBehaviour
             for (var i = 0; i < _turns.Count; ++i)
             {
                 var turn = _turns[i];
-                var jump = false;
-                if (turn.History.Count > 0)
+                var replay = _replays[i];
+
+                if (replay.Character.IsDead)
                 {
-                    var first = turn.History.Peek();
-                    if (first.Key <= _time /* - _spawnTime*/)
+                    continue;
+                }
+
+                var jump = false;
+                if (replay.TurnIndex < turn.History.Count)
+                {
+                    var first = turn.History[replay.TurnIndex];
+                    if (first.Key <= _time)
                     {
-                        turn.History.Dequeue();
-                        turn.Speed = ActionToSpeed(first.Value);
+                        ++replay.TurnIndex;
+                        replay.Speed = replay.Character.CharacterMovement.ActionToSpeed(first.Value);
                         jump = first.Value.HasFlag(InputController.Action.Jump);
+
+                        if (first.Value == InputController.Action.Action)
+                        {
+                            replay.Character.Action();
+                        }
                     }
                 }
-                turn.Character.Move(turn.Speed * Time.fixedDeltaTime, jump);
+                replay.Character.CharacterMovement.Move(replay.Speed * Time.fixedDeltaTime, jump);
             }
 
             _time += Time.fixedDeltaTime;
         }
     }
 
-    public void Save(Queue<KeyValuePair<float, InputController.Action>> history)
+    public void Save(List<KeyValuePair<float, InputController.Action>> history)
     {
         var item = new TurnInfo();
         item.History = history;
+        item.CharacterType = _characterType;
         _turns.Add(item);
         _view.SetNumberOfRecords(_turns.Count);
+        _characterType = 0;
         _view.SetVisibility(true);
+        _isPlaying = false;
+    }
+
+    private void PrepareReplay()
+    {
+        _view.SetVisibility(false);
+        foreach (var replay in _replays)
+        {
+            if (replay.Character != null)
+            {
+                Destroy(replay.Character.gameObject);
+            }
+        }
+        _replays.Clear();
+
+        foreach (var turn in _turns)
+        {
+            ReplayInfo replay = new ReplayInfo();
+            replay.Character = Instantiate(_characters[turn.CharacterType], _spawnPoint.position, Quaternion.identity);
+            replay.Character.InputController.enabled = false;
+            _replays.Add(replay);
+        }
+        _time = 0;
+        _isPlaying = true;
     }
 
  }

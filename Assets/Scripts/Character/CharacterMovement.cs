@@ -10,6 +10,7 @@ public class CharacterMovement : MonoBehaviour
     [SerializeField] private LayerMask _whatIsGround;
     [SerializeField] private Transform _groundCheck;
     [SerializeField] private Transform _ceilingCheck;
+    [SerializeField] private float _runSpeed = 40f;
 
     const float _groundedRadius = .2f;
     private bool _grounded;
@@ -17,10 +18,12 @@ public class CharacterMovement : MonoBehaviour
     private Rigidbody2D _rigidbody2D;
     private bool _facingRight = true;
     private Vector3 _velocity = Vector3.zero;
+    private Animator _animator;
 
     private void Awake()
     {
         _rigidbody2D = GetComponent<Rigidbody2D>();
+        _animator = GetComponent<Animator>();
     }
 
 
@@ -38,6 +41,9 @@ public class CharacterMovement : MonoBehaviour
 
     public void Move(float move, bool jump)
     {
+        _animator.SetBool("IsRunning", move != 0);
+        //_animator.SetBool("IsJumping", _grounded);
+
         if (_grounded || _airControl)
         {
             Vector3 targetVelocity = new Vector2(move * 10f, _rigidbody2D.velocity.y);
@@ -59,12 +65,25 @@ public class CharacterMovement : MonoBehaviour
         _rigidbody2D.AddForce(new Vector2(0f, _jumpForce * multiplier));
     }
 
-
     private void Flip()
     {
         _facingRight = !_facingRight;
         Vector3 newScale = transform.localScale;
         newScale.x *= -1;
         transform.localScale = newScale;
+    }
+
+    public float ActionToSpeed(InputController.Action action)
+    {
+        var horizontalMove = 0f;
+        if (action.HasFlag(InputController.Action.Left))
+        {
+            horizontalMove -= _runSpeed;
+        }
+        if (action.HasFlag(InputController.Action.Right))
+        {
+            horizontalMove += _runSpeed;
+        }
+        return horizontalMove;
     }
 }
