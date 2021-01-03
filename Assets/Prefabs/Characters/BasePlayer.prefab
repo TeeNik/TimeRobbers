@@ -1,5 +1,68 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6079397509438340670
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5837997375048732680}
+  - component: {fileID: 2900389773582196374}
+  - component: {fileID: 1718232322502325955}
+  m_Layer: 8
+  m_Name: GroundCollider
+  m_TagString: GroundCheck
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5837997375048732680
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6079397509438340670}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.616, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 6887438146412819412}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!58 &2900389773582196374
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6079397509438340670}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.1
+--- !u!114 &1718232322502325955
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6079397509438340670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d9c9c3575b74b74b9d9544960caa3f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  WhatIsGround:
+    serializedVersion: 2
+    m_Bits: 55
 --- !u!1 &6887438146059815335
 GameObject:
   m_ObjectHideFlags: 0
@@ -49,7 +112,7 @@ GameObject:
   - component: {fileID: 3998896790149965856}
   m_Layer: 8
   m_Name: BasePlayer
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -67,6 +130,7 @@ Transform:
   m_Children:
   - {fileID: 6887438146059815328}
   - {fileID: 6887438146616273639}
+  - {fileID: 5837997375048732680}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -133,7 +197,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4c73a138adf9d144b35799ec3985542, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _jumpForce: 400
+  _jumpForce: 500
   _movementSmoothing: 0.05
   _airControl: 1
   _whatIsGround:
@@ -141,6 +205,8 @@ MonoBehaviour:
     m_Bits: 55
   _groundCheck: {fileID: 6887438146616273639}
   _ceilingCheck: {fileID: 6887438146059815328}
+  _runSpeed: 40
+  _groundCollider: {fileID: 1718232322502325955}
 --- !u!50 &6887438146412819413
 Rigidbody2D:
   serializedVersion: 4
@@ -201,7 +267,7 @@ CircleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.48}
+  m_Offset: {x: 0, y: -0.44}
   serializedVersion: 2
   m_Radius: 0.21208946
 --- !u!114 &6887438146412819409
@@ -218,7 +284,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Movement: {fileID: 6887438146412819414}
   BaseCharacter: {fileID: 6887438146412819410}
-  RunSpeed: 40
 --- !u!114 &6887438146412819410
 MonoBehaviour:
   m_ObjectHideFlags: 0
