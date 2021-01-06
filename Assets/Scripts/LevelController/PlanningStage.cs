@@ -102,9 +102,9 @@ public class PlanningStage : MonoBehaviour
                         replay.Speed = replay.Character.CharacterMovement.ActionToSpeed(first.Value);
                         jump = first.Value.HasFlag(InputController.Action.Jump);
 
-                        if (first.Value == InputController.Action.Action)
+                        if (first.Value == InputController.Action.Ability)
                         {
-                            replay.Character.Action();
+                            replay.Character.UseAbility();
                         }
                     }
                 }
@@ -151,13 +151,26 @@ public class PlanningStage : MonoBehaviour
         {
             component.OnBeforeReplay();
         }
+        foreach (var component in _toRemove)
+        {
+            _replayUpdatesComponents.Remove(component);
+        }
+        _toRemove.Clear();
 
         _time = 0;
         _isPlaying = true;
     }
 
+    private List<ReplayUpdateComponent> _toRemove = new List<ReplayUpdateComponent>();
+
     public void RegisterReplayUpdateComponent(ReplayUpdateComponent component)
     {
         _replayUpdatesComponents.Add(component);
+    }
+
+    //TODO refactor
+    public void UnregisterReplayUpdateComponent(ReplayUpdateComponent component)
+    {
+        _toRemove.Add(component);
     }
  }

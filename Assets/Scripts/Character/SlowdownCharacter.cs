@@ -9,17 +9,10 @@ public class SlowdownCharacter : BaseCharacter
 
     private GameObject _spawnedArea;
 
-    public override void Action()
+    public override void UseAbility()
     {
         _spawnedArea = Instantiate(SlowdownArea, transform.position, Quaternion.identity);
-        base.Action();
+        base.UseAbility();
     }
 
-    void OnDestroy()
-    {
-        if (_spawnedArea != null)
-        {
-            Destroy(_spawnedArea);
-        }
-    }
 }

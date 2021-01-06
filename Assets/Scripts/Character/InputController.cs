@@ -18,10 +18,10 @@ public class InputController : MonoBehaviour
         Left = 1,
         Right = 2,
         Jump = 4,
-        Action = 8,
+        Ability = 8,
     }
 
-    private List<KeyValuePair<float, Action>> _history = new List<KeyValuePair<float, Action>>();
+    private readonly List<KeyValuePair<float, Action>> _history = new List<KeyValuePair<float, Action>>();
 
     private Action _action;
     private Action _last = Action.Empty;
@@ -42,9 +42,9 @@ public class InputController : MonoBehaviour
             {
                 _action |= Action.Jump;
             }
-            if (!_action.HasFlag(Action.Action) && Input.GetKeyDown(KeyCode.LeftShift))
+            if (!_action.HasFlag(Action.Ability) && Input.GetKeyDown(KeyCode.LeftShift))
             {
-                _action |= Action.Action;
+                _action |= Action.Ability;
             }
         }
     }
@@ -57,10 +57,10 @@ public class InputController : MonoBehaviour
             _last = _action;
         }
 
-        if (_action.HasFlag(Action.Action))
+        if (_action.HasFlag(Action.Ability))
         {
             StopRecording();
-            BaseCharacter.Action();
+            BaseCharacter.UseAbility();
         }
         else
         {

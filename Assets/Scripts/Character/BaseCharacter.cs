@@ -17,17 +17,7 @@ public class BaseCharacter : MonoBehaviour
         InputController = GetComponent<InputController>();
     }
 
-    void Start()
-    {
-        Init();
-    }
-
-    protected virtual void Init()
-    {
-        //Health = gameObject.AddComponent<HealthComponent>();
-    }
-
-    public virtual void Action()
+    public virtual void UseAbility()
     {
         IsDead = true;
         gameObject.SetActive(false);
