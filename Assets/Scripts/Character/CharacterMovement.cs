@@ -45,7 +45,7 @@ public class CharacterMovement : MonoBehaviour
     public void Move(float move, bool jump)
     {
         _animator.SetBool("IsRunning", move != 0);
-        //_animator.SetBool("IsJumping", _grounded);
+        _animator.SetBool("IsInAir", !_grounded);
 
         if (_grounded || _airControl)
         {
