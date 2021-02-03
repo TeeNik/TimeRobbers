@@ -16,17 +16,27 @@ public class PlanningView : MonoBehaviour
 
     void Start()
     {
-        foreach (var color in _characterColors)
+        for (var i = 0; i < _characterColors.Count; i++)
         {
             var item = Instantiate(_portraitView, _portraitParent);
-            item.Init(color);
+            item.Init(_characterColors[i]);
             _portraits.Add(item);
+        }
+        SetActiveCharacter(0);
+    }
+
+    public void SetActiveCharacter(int index)
+    {
+        for (int i = 0; i < _portraits.Count; ++i)
+        {
+            _portraits[i].SetActive(i == index);
         }
     }
 
     public void SetVisibility(bool isVisible)
     {
         _menu.SetActive(isVisible);
+        SetActiveCharacter(0);
     }
 
     public void SetNumberOfRecords(int count)

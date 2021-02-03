@@ -52,28 +52,25 @@ public class PlanningStage : MonoBehaviour
                 Debug.Log("Cleared");
                 _turns.Clear();
                 _view.SetNumberOfRecords(0);
-            }
-
-            if (Input.GetKeyDown(KeyCode.Space))
+            } 
+            else if (Input.GetKeyDown(KeyCode.Space))
             {
                Instantiate(_characters[_characterType], _spawnPoint.position, Quaternion.identity);
                PrepareReplay();
             }
-
-            if (Input.GetKeyDown(KeyCode.Return))
+            else if (Input.GetKeyDown(KeyCode.Return))
             {
                 PrepareReplay();
             }
-
-            if (Input.GetKeyDown(KeyCode.A))
+            else if (Input.GetKeyDown(KeyCode.A))
             {
                 _characterType = _characterType == 0 ? _characters.Length - 1 : _characterType - 1;
-                Debug.Log(_characters[_characterType].name);
+                _view.SetActiveCharacter(_characterType);
             }
             else if (Input.GetKeyDown(KeyCode.D))
             {
                 _characterType = _characterType == _characters.Length - 1 ? 0 : _characterType + 1;
-                Debug.Log(_characters[_characterType].name);
+                _view.SetActiveCharacter(_characterType);
             }
         }
     }
@@ -124,7 +121,7 @@ public class PlanningStage : MonoBehaviour
         _view.SetNumberOfRecords(_turns.Count);
         _characterType = 0;
         _view.SetVisibility(true);
-        _isPlaying = false;
+        SetIsPlaying(false);
     }
 
     private void PrepareReplay()
@@ -158,7 +155,7 @@ public class PlanningStage : MonoBehaviour
         _toRemove.Clear();
 
         _time = 0;
-        _isPlaying = true;
+        SetIsPlaying(true);
     }
 
     private List<ReplayUpdateComponent> _toRemove = new List<ReplayUpdateComponent>();
@@ -172,5 +169,11 @@ public class PlanningStage : MonoBehaviour
     public void UnregisterReplayUpdateComponent(ReplayUpdateComponent component)
     {
         _toRemove.Add(component);
+    }
+
+    private void SetIsPlaying(bool isPlaying)
+    {
+        _isPlaying = isPlaying;
+        GameInstance.Instance.IsPlaying = isPlaying;
     }
  }
