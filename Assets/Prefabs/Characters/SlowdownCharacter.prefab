@@ -86,6 +86,7 @@ SpriteRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -252,6 +253,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 247c7982a8d5f734ba41ff9707fa7415, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Type: 2
   SlowdownArea: {fileID: 4222224696289448626, guid: b487e3e328368dd458d69752e0ca3d36,
     type: 3}
 --- !u!1 &6887438146616273638

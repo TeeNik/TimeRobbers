@@ -2,6 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum CharacterType
+{
+    Base,
+    Shadow,
+    Slowdown,
+}
+
+
 public class BaseCharacter : MonoBehaviour
 {
 
@@ -9,7 +17,7 @@ public class BaseCharacter : MonoBehaviour
     public InputController InputController { get; private set; }
     public bool IsDead { get; private set; }
 
-    protected HealthComponent Health;
+    public CharacterType Type;
 
     void Awake()
     {

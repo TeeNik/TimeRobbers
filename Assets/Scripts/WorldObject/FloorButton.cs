@@ -14,10 +14,10 @@ public class FloorButton : MonoBehaviour
     {
         _originalPosition = transform.position;
         _replayUpdateComponent = GetComponent<ReplayUpdateComponent>();
-        _replayUpdateComponent.SetBeforeReplayAction(ReturnToInitial);
+        _replayUpdateComponent.SetBeforeReplayAction(ResetToInitial);
     }
 
-    void ReturnToInitial()
+    void ResetToInitial()
     {
         transform.position = _originalPosition;
     }

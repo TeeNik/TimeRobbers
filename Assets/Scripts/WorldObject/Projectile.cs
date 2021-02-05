@@ -6,7 +6,6 @@ public class Projectile : MonoBehaviour
     public Vector3 Velocity;
     [Range(0, .3f)] public float MovementSmoothing = .05f;
 
-
     private SpeedComponent _speedComponent;
     private Rigidbody2D _rigidbody2D;
     private Vector3 _velocity;
@@ -19,7 +18,10 @@ public class Projectile : MonoBehaviour
 
     void FixedUpdate()
     {
-        Vector3 targetVelocity = Velocity * _speedComponent.TimeScale;
-        _rigidbody2D.velocity = Vector3.SmoothDamp(_rigidbody2D.velocity, targetVelocity, ref _velocity, MovementSmoothing);
+        if (GameInstance.Instance.IsPlaying)
+        {
+            Vector3 targetVelocity = Velocity * _speedComponent.TimeScale;
+            _rigidbody2D.velocity = Vector3.SmoothDamp(_rigidbody2D.velocity, targetVelocity, ref _velocity, MovementSmoothing);
+        }
     }
 }
