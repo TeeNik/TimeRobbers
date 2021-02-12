@@ -16,7 +16,6 @@ public class PlanningStage : MonoBehaviour
         public int TurnIndex;
     }
 
-
     [SerializeField] private PlanningView _view;
     [SerializeField] private Transform _spawnPoint;
     [SerializeField] private BaseCharacter[] _characters;
@@ -40,39 +39,8 @@ public class PlanningStage : MonoBehaviour
 
     void Start()
     {
+        _view.Init(OnCharacterSelected, OnHistoryItemDeleted);
         _view.SetVisibility(true);
-    }
-
-    void Update()
-    {
-        if (!_isPlaying)
-        {
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                Debug.Log("Cleared");
-                _turns.Clear();
-                _view.SetNumberOfRecords(0);
-            } 
-            else if (Input.GetKeyDown(KeyCode.Space))
-            {
-               Instantiate(_characters[_characterType], _spawnPoint.position, Quaternion.identity);
-               PrepareReplay();
-            }
-            else if (Input.GetKeyDown(KeyCode.Return))
-            {
-                PrepareReplay();
-            }
-            else if (Input.GetKeyDown(KeyCode.A))
-            {
-                _characterType = _characterType == 0 ? _characters.Length - 1 : _characterType - 1;
-                _view.SetActiveCharacter(_characterType);
-            }
-            else if (Input.GetKeyDown(KeyCode.D))
-            {
-                _characterType = _characterType == _characters.Length - 1 ? 0 : _characterType + 1;
-                _view.SetActiveCharacter(_characterType);
-            }
-        }
     }
 
     void FixedUpdate()
@@ -99,12 +67,13 @@ public class PlanningStage : MonoBehaviour
                         replay.Speed = replay.Character.CharacterMovement.ActionToSpeed(first.Value);
                         jump = first.Value.HasFlag(InputController.Action.Jump);
 
-                        if (first.Value == InputController.Action.Ability)
+                        if (first.Value.HasFlag(InputController.Action.Ability))
                         {
                             replay.Character.UseAbility();
                         }
                     }
                 }
+
                 replay.Character.CharacterMovement.Move(replay.Speed * Time.fixedDeltaTime, jump);
             }
 
@@ -112,13 +81,25 @@ public class PlanningStage : MonoBehaviour
         }
     }
 
-    public void Save(List<KeyValuePair<float, InputController.Action>> history)
+    void OnCharacterSelected(int selectedCharacter)
+    {
+        _characterType = selectedCharacter;
+        Instantiate(_characters[_characterType], _spawnPoint.position, Quaternion.identity);
+        PrepareReplay();
+    }
+
+    void OnHistoryItemDeleted(int index)
+    {
+        _turns.RemoveAt(index);
+    }
+
+public void Save(List<KeyValuePair<float, InputController.Action>> history)
     {
         var item = new TurnInfo();
         item.History = history;
         item.CharacterType = _characterType;
         _turns.Add(item);
-        _view.SetNumberOfRecords(_turns.Count);
+        _view.CreateHistoryItem(_characterType);
         _characterType = 0;
         _view.SetVisibility(true);
         SetIsPlaying(false);
