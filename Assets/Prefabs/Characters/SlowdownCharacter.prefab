@@ -254,6 +254,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Type: 2
+  DeathTags:
+  - Danger
+  - InstantDeath
   SlowdownArea: {fileID: 4222224696289448626, guid: b487e3e328368dd458d69752e0ca3d36,
     type: 3}
 --- !u!1 &6887438146616273638

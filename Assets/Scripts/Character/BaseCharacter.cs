@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public enum CharacterType
@@ -19,6 +20,8 @@ public class BaseCharacter : MonoBehaviour
 
     public CharacterType Type;
 
+    [SerializeField] private string[] DeathTags;
+
     void Awake()
     {
         CharacterMovement = GetComponent<CharacterMovement>();
@@ -28,7 +31,8 @@ public class BaseCharacter : MonoBehaviour
     public virtual void UseAbility()
     {
         IsDead = true;
-        gameObject.SetActive(false);
+        CharacterMovement.PlayDieAnimation();
+        //gameObject.SetActive(false);
     }
 
     void OnTriggerEnter2D(Collider2D collider)
@@ -38,16 +42,20 @@ public class BaseCharacter : MonoBehaviour
 
     protected virtual void HandleCollision(Collider2D collider)
     {
-        if (collider.gameObject.CompareTag(StringTags.Danger) && !IsDead)
+        if (DeathTags.Contains(collider.gameObject.tag) && !IsDead)
         {
             //TODO refactor messing with recording
             if (InputController.enabled)
             {
                 InputController.StopRecording();
             }
-            print("Die");
             IsDead = true;
-            gameObject.SetActive(false);
+            CharacterMovement.PlayDieAnimation();
         }
+    }
+
+    public void DisableGameObject()
+    {
+        gameObject.SetActive(false);
     }
 }

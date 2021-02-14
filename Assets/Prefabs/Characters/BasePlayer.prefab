@@ -149,6 +149,7 @@ SpriteRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -252,7 +253,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.62, y: 0.79938245}
+  m_Size: {x: 0.62, y: 0.8}
   m_EdgeRadius: 0
 --- !u!58 &6887438146412819415
 CircleCollider2D:
@@ -296,6 +297,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44cf53091c7edb84799e2d6d8f9976bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Type: 0
+  DeathTags:
+  - Danger
+  - InstantDeath
 --- !u!95 &3998896790149965856
 Animator:
   serializedVersion: 3

@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Danger
   - GroundCheck
+  - InstantDeath
   layers:
   - Default
   - TransparentFX

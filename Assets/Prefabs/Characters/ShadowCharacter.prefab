@@ -46,7 +46,7 @@ GameObject:
   - component: {fileID: 6887438146412819415}
   - component: {fileID: 6887438146412819409}
   - component: {fileID: 3998896790149965856}
-  - component: {fileID: 914265072523601762}
+  - component: {fileID: 6599981987041838149}
   m_Layer: 8
   m_Name: ShadowCharacter
   m_TagString: Player
@@ -113,7 +113,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_Sprite: {fileID: -3048021906234476638, guid: 00668049d4cae994aa9079dd08be6bfb,
     type: 3}
-  m_Color: {r: 0.6, g: 0.32974365, b: 0.7372549, a: 1}
+  m_Color: {r: 0.6, g: 0.32974365, b: 0.7372549, a: 0.69803923}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -205,9 +205,9 @@ CircleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.44}
+  m_Offset: {x: 0, y: -0.34}
   serializedVersion: 2
-  m_Radius: 0.21208946
+  m_Radius: 0.3
 --- !u!114 &6887438146412819409
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -221,7 +221,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Movement: {fileID: 6887438146412819414}
-  BaseCharacter: {fileID: 914265072523601762}
+  BaseCharacter: {fileID: 6599981987041838149}
 --- !u!95 &3998896790149965856
 Animator:
   serializedVersion: 3
@@ -241,7 +241,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &914265072523601762
+--- !u!114 &6599981987041838149
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -250,10 +250,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 6887438146412819418}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9b4eaf1fd11cfa4188bfaabcfa0261b, type: 3}
+  m_Script: {fileID: 11500000, guid: 44cf53091c7edb84799e2d6d8f9976bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Type: 1
+  DeathTags:
+  - InstantDeath
 --- !u!1 &6887438146616273638
 GameObject:
   m_ObjectHideFlags: 0

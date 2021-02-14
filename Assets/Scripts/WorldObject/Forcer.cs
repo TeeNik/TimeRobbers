@@ -30,9 +30,9 @@ public class Forcer : MonoBehaviour
         {
             float step = (_endPos.position - _startPos.position).magnitude / _upTime;
             transform.position = Vector3.MoveTowards(transform.position, _endPos.position, deltaTime * step);
-            _time += deltaTime;
+            _time += deltaTime * _speedComponent.TimeScale;
             _force = Mathf.Lerp(0, _maxForce, _time / _upTime);
-            Debug.Log(_time);
+            //Debug.Log(_time);
 
             if (Vector3.SqrMagnitude(transform.position - _endPos.position) < 0.0001f)
             {
@@ -92,11 +92,11 @@ public class Forcer : MonoBehaviour
     }
     void ApplyForceToTarget()
     {
-        if (_target != null)
+        if (_target != null && _target.gameObject.activeSelf)
         {
             _target.transform.parent = null;
             var character = _target.GetComponent<CharacterMovement>();
-            Debug.Log("Force applied: " + _force);
+            //Debug.Log("Force applied: " + _force);
             character.AddJumpForce(_force);
             _target = null;
         }

@@ -21,6 +21,7 @@ public class CharacterMovement : MonoBehaviour
     private bool _facingRight = true;
     private Vector3 _velocity = Vector3.zero;
     private Animator _animator;
+    private bool _isDead;
 
     private void Awake()
     {
@@ -44,22 +45,25 @@ public class CharacterMovement : MonoBehaviour
 
     public void Move(float move, bool jump)
     {
-        _animator.SetBool("IsRunning", move != 0);
-        _animator.SetBool("IsInAir", !_grounded);
+        if (!_isDead)
+        {
+            _animator.SetBool("IsRunning", move != 0);
+            _animator.SetBool("IsInAir", !_grounded);
 
-        if (_grounded || _airControl)
-        {
-            Vector3 targetVelocity = new Vector2(move * 10f, _rigidbody2D.velocity.y);
-            _rigidbody2D.velocity = Vector3.SmoothDamp(_rigidbody2D.velocity, targetVelocity, ref _velocity, _movementSmoothing);
-            if (move > 0 && !_facingRight || move < 0 && _facingRight)
+            if (_grounded || _airControl)
             {
-                Flip();
+                Vector3 targetVelocity = new Vector2(move * 10f, _rigidbody2D.velocity.y);
+                _rigidbody2D.velocity = Vector3.SmoothDamp(_rigidbody2D.velocity, targetVelocity, ref _velocity, _movementSmoothing);
+                if (move > 0 && !_facingRight || move < 0 && _facingRight)
+                {
+                    Flip();
+                }
             }
-        }
-        if (_grounded && jump)
-        {
-            _grounded = false;
-            _rigidbody2D.AddForce(new Vector2(0f, _jumpForce));
+            if (_grounded && jump)
+            {
+                _grounded = false;
+                _rigidbody2D.AddForce(new Vector2(0f, _jumpForce));
+            }
         }
     }
 
@@ -88,5 +92,13 @@ public class CharacterMovement : MonoBehaviour
             horizontalMove += _runSpeed;
         }
         return horizontalMove;
+    }
+
+    public void PlayDieAnimation()
+    {
+        _isDead = true;
+        _rigidbody2D.gravityScale = 0;
+        _rigidbody2D.velocity = Vector2.zero;
+        _animator.SetTrigger("Death");
     }
 }
