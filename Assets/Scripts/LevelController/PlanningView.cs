@@ -25,6 +25,8 @@ public class PlanningView : MonoBehaviour
     private int _selectedCharacter;
     private int _selectedHistoryItem;
 
+    [SerializeField] private SpriteRenderer CharacterView;
+
     void Start()
     {
         for (var i = 0; i < _characterColors.Count; i++)
@@ -84,6 +86,8 @@ public class PlanningView : MonoBehaviour
         {
             _portraits[i].SetActive(i == index);
         }
+
+        CharacterView.color = _characterColors[index];
     }
 
     public void SetActiveHistoryItem(int index)
@@ -117,5 +121,7 @@ public class PlanningView : MonoBehaviour
         _selectedHistoryItem = _historyItems.Count - 1;
         SetActiveCharacter(0);
         SetActiveHistoryItem(_selectedHistoryItem);
+
+        CharacterView.gameObject.SetActive(isVisible);
     }
 }

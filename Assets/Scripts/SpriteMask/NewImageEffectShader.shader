@@ -54,25 +54,16 @@ Shader "TeeNik/NewImageEffectShader"
             fixed4 frag (v2f i) : SV_Target
             {
                 fixed4 col = tex2D(_MainTex, i.uv);
-				float dist = distance(i.screenPos / _ScreenParams.xy, _MaskTransform.xy);
-				//if (dist > .5)
-				//{
-				//	float amnt = col.r * 0.299 + col.g * 0.587 + col.b * 0.114;
-				//	col.rgb = fixed3(amnt, amnt, amnt);
-				//}
-				//col.rgb = float3(i.screenPos, 0);
-                // just invert the colors
-                //col.rgb = 1 - col.rgb;
-				//
-				//float dist = distance(projected.xy, _MaskTransform.xy);
-				//if (dist > _MaskTransform.z)
-				//{
-				//	float amnt = col.r * 0.299 + col.g * 0.587 + col.b * 0.114;
-				//	col.rgb = fixed3(amnt, amnt, amnt);
-				//}
-				//col.rgb = float3(i.uv, 0);
 
-				//col.rgb = float3(i.screenPos , 0);
+				float dist = distance(i.screenPos * _ScreenParams.xy, _MaskTransform.xy * _ScreenParams.xy);
+				if (dist > _MaskTransform.z)
+				{
+					float amnt = col.r * 0.299 + col.g * 0.587 + col.b * 0.114;
+					col.rgb = fixed3(amnt, amnt, amnt);
+				}
+				//else if (dist > _MaskTransform.z - 20) {
+				//	col.rgb = fixed3(1, 1, 1);
+				//}
 
                 return col;
             }
