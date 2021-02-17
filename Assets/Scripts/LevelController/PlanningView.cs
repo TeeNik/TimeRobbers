@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 
@@ -26,6 +27,7 @@ public class PlanningView : MonoBehaviour
     private int _selectedHistoryItem;
 
     [SerializeField] private SpriteRenderer CharacterView;
+    [SerializeField] private Transform CameraMask;
 
     void Start()
     {
@@ -51,6 +53,7 @@ public class PlanningView : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 _onCharacterSelected.Invoke(_selectedCharacter);
+                CameraMask.DOMoveZ(2000, 0.35f).SetEase(Ease.InCubic);
             }
             else if (Input.GetKeyDown(KeyCode.A))
             {
@@ -123,5 +126,10 @@ public class PlanningView : MonoBehaviour
         SetActiveHistoryItem(_selectedHistoryItem);
 
         CharacterView.gameObject.SetActive(isVisible);
+
+        if (isVisible)
+        {
+            CameraMask.DOMoveZ(150, 0.5f).SetEase(Ease.InCubic);
+        }
     }
 }

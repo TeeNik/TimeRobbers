@@ -1,9 +1,3 @@
-// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
-// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
-// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
 Shader "TeeNik/NewImageEffectShader"
 {
     Properties
@@ -34,14 +28,12 @@ Shader "TeeNik/NewImageEffectShader"
             {
                 float2 uv : TEXCOORD0;
                 float4 vertex : SV_POSITION;
-				fixed4 worldPos : WORLDPOS;
 				float2 screenPos : TEXCOORD1;
             };
 
             v2f vert (appdata v)
             {
                 v2f o;
-				o.worldPos = mul(unity_ObjectToWorld, v.vertex);
 				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.screenPos = ComputeScreenPos(o.vertex);
                 o.uv = v.uv;
