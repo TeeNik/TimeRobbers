@@ -7,12 +7,12 @@ public class ReplayUpdateComponent : MonoBehaviour
 
     void Start()
     {
-        PlanningStage.Instance.RegisterReplayUpdateComponent(this);
+        GameInstance.Instance.PlanningStage.RegisterReplayUpdateComponent(this);
     }
 
     public void Unregister()
     {
-        PlanningStage.Instance.UnregisterReplayUpdateComponent(this);
+        GameInstance.Instance.PlanningStage.UnregisterReplayUpdateComponent(this);
     }
 
     public void SetBeforeReplayAction(Action beforeReplayAction)

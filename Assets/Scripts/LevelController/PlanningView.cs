@@ -20,6 +20,7 @@ public class PlanningView : MonoBehaviour
     private List<PortraitView> _portraits = new List<PortraitView>();
     private List<PortraitView> _historyItems = new List<PortraitView>();
 
+    private CharacterType[] _allowedCharacters;
     private Action<int> _onCharacterSelected;
     private Action<int> _onHistoryItemDeleted;
 
@@ -29,21 +30,35 @@ public class PlanningView : MonoBehaviour
     [SerializeField] private SpriteRenderer CharacterView;
     [SerializeField] private Transform CameraMask;
 
-    void Start()
-    {
-        for (var i = 0; i < _characterColors.Count; i++)
-        {
-            var item = Instantiate(_portraitView, _portraitParent);
-            item.Init(_characterColors[i]);
-            _portraits.Add(item);
-        }
-        SetActiveCharacter(0);
-    }
-
     public void Init(Action<int> onCharacterSelected, Action<int> onHistoryItemDeleted)
     {
         _onCharacterSelected = onCharacterSelected;
         _onHistoryItemDeleted = onHistoryItemDeleted;
+    }
+
+    public void InitLevel(CharacterType[] allowedCharacters)
+    {
+        _allowedCharacters = allowedCharacters;
+        foreach (var portraitView in _portraits)
+        {
+            Destroy(portraitView.gameObject);
+        }
+        _portraits.Clear();
+        for (var i = 0; i < allowedCharacters.Length; i++)
+        {
+            var item = Instantiate(_portraitView, _portraitParent);
+            item.Init(_characterColors[(int)_allowedCharacters[i]]);
+            _portraits.Add(item);
+        }
+        SetActiveCharacter(0);
+        if (allowedCharacters.Length > 1)
+        {
+            SetVisibility(true);
+        }
+        else
+        {
+            _onCharacterSelected((int)_allowedCharacters[0]);
+        }
     }
 
     void Update()

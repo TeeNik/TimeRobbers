@@ -5,7 +5,6 @@ using UnityEngine.Assertions;
 
 public class InputController : MonoBehaviour
 {
-    public CharacterMovement Movement;
     public BaseCharacter BaseCharacter;
 
     private float _time = 0;
@@ -51,24 +50,31 @@ public class InputController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (_last != _action)
+        if (_isRecording)
         {
-            _history.Add(new KeyValuePair<float, Action>(_time, _action));
-            _last = _action;
-        }
+            if (_last != _action)
+            {
+                _history.Add(new KeyValuePair<float, Action>(_time, _action));
+                _last = _action;
+            }
 
-        if (_action.HasFlag(Action.Ability))
-        {
-            StopRecording();
-            BaseCharacter.UseAbility();
-        }
-        else
-        {
-            Movement.Move(Movement.ActionToSpeed(_action) * Time.fixedDeltaTime, _action.HasFlag(Action.Jump));
-        }
+            if (_action.HasFlag(Action.Ability))
+            {
+                StopRecording();
+                BaseCharacter.UseAbility();
+            }
+            else if (BaseCharacter.IsDead)
+            {
+                StopRecording();
+            }
+            else
+            {
+                BaseCharacter.CharacterMovement.Move(BaseCharacter.CharacterMovement.ActionToSpeed(_action) * Time.fixedDeltaTime, _action.HasFlag(Action.Jump));
+            }
 
-        _action = Action.Empty;
-        _time += Time.fixedDeltaTime;
+            _action = Action.Empty;
+            _time += Time.fixedDeltaTime;
+        }
     }
 
     public void StopRecording()
@@ -76,6 +82,6 @@ public class InputController : MonoBehaviour
         Assert.IsTrue(_isRecording);
 
         _isRecording = false;
-        PlanningStage.Instance.Save(_history);
+        GameInstance.Instance.PlanningStage.Save(_history);
     }
 }

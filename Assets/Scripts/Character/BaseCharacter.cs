@@ -15,7 +15,6 @@ public class BaseCharacter : MonoBehaviour
 {
 
     public CharacterMovement CharacterMovement { get; private set; }
-    public InputController InputController { get; private set; }
     public bool IsDead { get; private set; }
 
     public CharacterType Type;
@@ -25,14 +24,11 @@ public class BaseCharacter : MonoBehaviour
     void Awake()
     {
         CharacterMovement = GetComponent<CharacterMovement>();
-        InputController = GetComponent<InputController>();
     }
 
     public virtual void UseAbility()
     {
-        IsDead = true;
-        CharacterMovement.PlayDieAnimation();
-        //gameObject.SetActive(false);
+        Die();
     }
 
     void OnTriggerEnter2D(Collider2D collider)
@@ -44,14 +40,14 @@ public class BaseCharacter : MonoBehaviour
     {
         if (DeathTags.Contains(collider.gameObject.tag) && !IsDead)
         {
-            //TODO refactor messing with recording
-            if (InputController.enabled)
-            {
-                InputController.StopRecording();
-            }
-            IsDead = true;
-            CharacterMovement.PlayDieAnimation();
+            Die();
         }
+    }
+
+    private void Die()
+    {
+        IsDead = true;
+        CharacterMovement.PlayDieAnimation();
     }
 
     public void DisableGameObject()

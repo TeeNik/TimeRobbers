@@ -1,15 +1,37 @@
+using System.Collections.Generic;
 using UnityEngine;
 
-public class GameInstance
+public class GameInstance : MonoBehaviour
 {
     private static GameInstance _instance;
-    public static GameInstance Instance
+
+    public PlanningStage PlanningStage;
+
+    [SerializeField] private Level[] _levels;
+    private int _currentLevelIndex;
+    private Level _loadedLevel;
+
+    public static GameInstance Instance => _instance;
+
+    [HideInInspector]
+    public bool IsPlaying;
+
+    void Awake()
     {
-        get => _instance ?? (_instance = new GameInstance());
-        private set => _instance = value;
+        _instance = this;
     }
 
-    public bool IsPlaying;
+    void Start()
+    {
+        PlanningStage.Init();
+        LoadCurrentLevel();
+    }
+
+    public void LoadCurrentLevel()
+    {
+        _loadedLevel = Instantiate(_levels[_currentLevelIndex]);
+        PlanningStage.InitLevel(_loadedLevel);
+    }
 
     public void FinishLevel()
     {

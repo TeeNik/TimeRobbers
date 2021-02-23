@@ -17,7 +17,6 @@ public class PlanningStage : MonoBehaviour
     }
 
     [SerializeField] private PlanningView _view;
-    [SerializeField] private Transform _spawnPoint;
     [SerializeField] private BaseCharacter[] _characters;
 
     private int _characterType = 0;
@@ -30,17 +29,19 @@ public class PlanningStage : MonoBehaviour
     private bool _isPlaying = false;
     private float _time = 0;
 
-    public static PlanningStage Instance { get; private set; }
+    private bool _isPlanningEnabled = false;
+    private Level _level;
 
-    void Awake()
-    {
-        Instance = this;
-    }
-
-    void Start()
+    public void Init()
     {
         _view.Init(OnCharacterSelected, OnHistoryItemDeleted);
-        _view.SetVisibility(true);
+    }
+
+    public void InitLevel(Level level)
+    {
+        _level = level;
+        _isPlanningEnabled = level.AllowedCharacters.Length > 1;
+        _view.InitLevel(level.AllowedCharacters);
     }
 
     void FixedUpdate()
@@ -84,7 +85,7 @@ public class PlanningStage : MonoBehaviour
     void OnCharacterSelected(int selectedCharacter)
     {
         _characterType = selectedCharacter;
-        Instantiate(_characters[_characterType], _spawnPoint.position, Quaternion.identity);
+        Instantiate(_characters[_characterType], _level.SpawnPoint.position, Quaternion.identity);
         PrepareReplay();
     }
 
@@ -93,16 +94,23 @@ public class PlanningStage : MonoBehaviour
         _turns.RemoveAt(index);
     }
 
-public void Save(List<KeyValuePair<float, InputController.Action>> history)
+    public void Save(List<KeyValuePair<float, InputController.Action>> history)
     {
-        var item = new TurnInfo();
-        item.History = history;
-        item.CharacterType = _characterType;
-        _turns.Add(item);
-        _view.CreateHistoryItem(_characterType);
-        _characterType = 0;
-        _view.SetVisibility(true);
-        SetIsPlaying(false);
+        if (_isPlanningEnabled)
+        {
+            var item = new TurnInfo();
+            item.History = history;
+            item.CharacterType = _characterType;
+            _turns.Add(item);
+            _view.CreateHistoryItem(_characterType);
+            _characterType = 0;
+            SetIsPlaying(false);
+            _view.SetVisibility(true);
+        }
+        else
+        {
+            OnCharacterSelected(0);
+        }
     }
 
     private void PrepareReplay()
@@ -120,8 +128,8 @@ public void Save(List<KeyValuePair<float, InputController.Action>> history)
         foreach (var turn in _turns)
         {
             ReplayInfo replay = new ReplayInfo();
-            replay.Character = Instantiate(_characters[turn.CharacterType], _spawnPoint.position, Quaternion.identity);
-            replay.Character.InputController.enabled = false;
+            replay.Character = Instantiate(_characters[turn.CharacterType], _level.SpawnPoint.position, Quaternion.identity);
+            replay.Character.GetComponent<InputController>().enabled = false;
             _replays.Add(replay);
         }
 
