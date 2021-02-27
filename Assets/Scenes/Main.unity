@@ -1846,6 +1846,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _menu: {fileID: 1270212598}
+  _material: {fileID: 2100000, guid: 5695392e9905e95458cded89ac287078, type: 2}
   _characterColors:
   - {r: 0.7372549, g: 0.32941177, b: 0.33333334, a: 1}
   - {r: 0.6, g: 0.32941177, b: 0.7372549, a: 1}

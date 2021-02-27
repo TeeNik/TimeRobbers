@@ -8,6 +8,7 @@ public class PlanningView : MonoBehaviour
 {
     [SerializeField] private GameObject _menu;
 
+
     [Header("Portraits")]
     [SerializeField] private List<Color> _characterColors;
     [SerializeField] private Transform _portraitParent;
@@ -16,6 +17,12 @@ public class PlanningView : MonoBehaviour
     [Header("History")]
     [SerializeField] private Transform _historyParent;
     [SerializeField] private PortraitView _historyItemView;
+
+    [Header("History")]
+    [SerializeField] private Material _material;
+    [SerializeField] private SpriteRenderer _characterView;
+    [SerializeField] private Transform _cameraMask;
+
 
     private List<PortraitView> _portraits = new List<PortraitView>();
     private List<PortraitView> _historyItems = new List<PortraitView>();
@@ -26,9 +33,6 @@ public class PlanningView : MonoBehaviour
 
     private int _selectedCharacter;
     private int _selectedHistoryItem;
-
-    [SerializeField] private SpriteRenderer CharacterView;
-    [SerializeField] private Transform CameraMask;
 
     public void Init(Action<int> onCharacterSelected, Action<int> onHistoryItemDeleted)
     {
@@ -50,7 +54,6 @@ public class PlanningView : MonoBehaviour
             item.Init(_characterColors[(int)_allowedCharacters[i]]);
             _portraits.Add(item);
         }
-        SetActiveCharacter(0);
         if (allowedCharacters.Length > 1)
         {
             SetVisibility(true);
@@ -68,17 +71,19 @@ public class PlanningView : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 _onCharacterSelected.Invoke(_selectedCharacter);
-                CameraMask.DOMoveZ(2000, 0.35f).SetEase(Ease.InCubic);
+                _cameraMask.DOMoveZ(2000, 0.35f).SetEase(Ease.InCubic);
             }
             else if (Input.GetKeyDown(KeyCode.A))
             {
                 _selectedCharacter = _selectedCharacter == 0 ? _portraits.Count - 1 : _selectedCharacter - 1;
                 SetActiveCharacter(_selectedCharacter);
+                PlayChromaticAberration();
             }
             else if (Input.GetKeyDown(KeyCode.D))
             {
                 _selectedCharacter = _selectedCharacter == _portraits.Count - 1 ? 0 : _selectedCharacter + 1;
                 SetActiveCharacter(_selectedCharacter);
+                PlayChromaticAberration();
             }
             else if (Input.GetKeyDown(KeyCode.Q))
             {
@@ -98,6 +103,12 @@ public class PlanningView : MonoBehaviour
         }
     }
 
+    private void PlayChromaticAberration()
+    {
+        _material.SetFloat("_Amount", 0.0f);
+        _material.DOFloat(0.01f, "_Amount", 0.1f).SetLoops(2, LoopType.Yoyo);
+    }
+
     public void SetActiveCharacter(int index)
     {
         for (int i = 0; i < _portraits.Count; ++i)
@@ -105,7 +116,7 @@ public class PlanningView : MonoBehaviour
             _portraits[i].SetActive(i == index);
         }
 
-        CharacterView.color = _characterColors[index];
+        _characterView.color = _characterColors[index];
     }
 
     public void SetActiveHistoryItem(int index)
@@ -140,11 +151,11 @@ public class PlanningView : MonoBehaviour
         SetActiveCharacter(0);
         SetActiveHistoryItem(_selectedHistoryItem);
 
-        CharacterView.gameObject.SetActive(isVisible);
+        _characterView.gameObject.SetActive(isVisible);
 
         if (isVisible)
         {
-            CameraMask.DOMoveZ(150, 0.5f).SetEase(Ease.InCubic);
+            _cameraMask.DOMoveZ(150, 0.5f).SetEase(Ease.InCubic);
         }
     }
 }

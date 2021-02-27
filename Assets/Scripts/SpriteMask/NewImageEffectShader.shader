@@ -42,6 +42,7 @@ Shader "TeeNik/NewImageEffectShader"
 
             sampler2D _MainTex;
 			uniform float4 _MaskTransform;
+			uniform float _Amount;
 
             fixed4 frag (v2f i) : SV_Target
             {
@@ -53,9 +54,15 @@ Shader "TeeNik/NewImageEffectShader"
 					float amnt = col.r * 0.299 + col.g * 0.587 + col.b * 0.114;
 					col.rgb = fixed3(amnt, amnt, amnt);
 				}
-				//else if (dist > _MaskTransform.z - 20) {
-				//	col.rgb = fixed3(1, 1, 1);
-				//}
+				else if (dist > _MaskTransform.z - 10) {
+					col.rgb = fixed3(1, 1, 1);
+				}
+				else {
+					float colR = tex2D(_MainTex, float2(i.uv.x - _Amount, i.uv.y - _Amount)).r;
+					float colG = tex2D(_MainTex, i.uv).g;
+					float colB = tex2D(_MainTex, float2(i.uv.x + _Amount, i.uv.y + _Amount)).b;
+					col.rgb = fixed3(colR, colG, colB);
+				}
 
                 return col;
             }
