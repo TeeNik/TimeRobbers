@@ -3,5 +3,6 @@ using UnityEngine;
 public class Level : MonoBehaviour
 {
     public CharacterType[] AllowedCharacters;
-    public Transform SpawnPoint;
+    public SpriteRenderer CharacterView;
+    public Vector3 SpawnPoint => CharacterView.transform.position;
 }

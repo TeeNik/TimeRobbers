@@ -41,7 +41,7 @@ public class PlanningStage : MonoBehaviour
     {
         _level = level;
         _isPlanningEnabled = level.AllowedCharacters.Length > 1;
-        _view.InitLevel(level.AllowedCharacters);
+        _view.InitLevel(level);
     }
 
     void FixedUpdate()
@@ -85,7 +85,7 @@ public class PlanningStage : MonoBehaviour
     void OnCharacterSelected(int selectedCharacter)
     {
         _characterType = selectedCharacter;
-        Instantiate(_characters[_characterType], _level.SpawnPoint.position, Quaternion.identity);
+        Instantiate(_characters[_characterType], _level.SpawnPoint, Quaternion.identity);
         PrepareReplay();
     }
 
@@ -128,7 +128,7 @@ public class PlanningStage : MonoBehaviour
         foreach (var turn in _turns)
         {
             ReplayInfo replay = new ReplayInfo();
-            replay.Character = Instantiate(_characters[turn.CharacterType], _level.SpawnPoint.position, Quaternion.identity);
+            replay.Character = Instantiate(_characters[turn.CharacterType], _level.SpawnPoint, Quaternion.identity);
             replay.Character.GetComponent<InputController>().enabled = false;
             _replays.Add(replay);
         }

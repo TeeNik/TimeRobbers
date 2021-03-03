@@ -20,7 +20,6 @@ public class PlanningView : MonoBehaviour
 
     [Header("History")]
     [SerializeField] private Material _material;
-    [SerializeField] private SpriteRenderer _characterView;
     [SerializeField] private Transform _cameraMask;
 
 
@@ -34,27 +33,32 @@ public class PlanningView : MonoBehaviour
     private int _selectedCharacter;
     private int _selectedHistoryItem;
 
+    private SpriteRenderer _characterView;
+
     public void Init(Action<int> onCharacterSelected, Action<int> onHistoryItemDeleted)
     {
         _onCharacterSelected = onCharacterSelected;
         _onHistoryItemDeleted = onHistoryItemDeleted;
     }
 
-    public void InitLevel(CharacterType[] allowedCharacters)
+    public void InitLevel(Level level)
     {
-        _allowedCharacters = allowedCharacters;
+        _characterView = level.CharacterView;
+        _cameraMask.transform.position = level.CharacterView.transform.position;
+
+        _allowedCharacters = level.AllowedCharacters;
         foreach (var portraitView in _portraits)
         {
             Destroy(portraitView.gameObject);
         }
         _portraits.Clear();
-        for (var i = 0; i < allowedCharacters.Length; i++)
+        for (var i = 0; i < _allowedCharacters.Length; i++)
         {
             var item = Instantiate(_portraitView, _portraitParent);
             item.Init(_characterColors[(int)_allowedCharacters[i]]);
             _portraits.Add(item);
         }
-        if (allowedCharacters.Length > 1)
+        if (_allowedCharacters.Length > 1)
         {
             SetVisibility(true);
         }
