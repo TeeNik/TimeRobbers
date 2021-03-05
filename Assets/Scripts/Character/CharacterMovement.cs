@@ -94,11 +94,22 @@ public class CharacterMovement : MonoBehaviour
         return horizontalMove;
     }
 
+    public void Freeze()
+    {
+        StopMovement();
+        _animator.speed = 0;
+    }
+
     public void PlayDieAnimation()
     {
         _isDead = true;
+        StopMovement();
+        _animator.SetTrigger("Death");
+    }
+
+    void StopMovement()
+    {
         _rigidbody2D.gravityScale = 0;
         _rigidbody2D.velocity = Vector2.zero;
-        _animator.SetTrigger("Death");
     }
 }

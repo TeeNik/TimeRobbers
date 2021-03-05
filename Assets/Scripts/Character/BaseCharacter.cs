@@ -52,6 +52,7 @@ public class BaseCharacter : MonoBehaviour
 
     public void DisableGameObject()
     {
-        gameObject.SetActive(false);
+        Destroy(gameObject);
+        //gameObject.SetActive(false);
     }
 }

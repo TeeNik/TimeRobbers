@@ -75,7 +75,6 @@ public class PlanningView : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 _onCharacterSelected.Invoke(_selectedCharacter);
-                _cameraMask.DOMoveZ(2000, 0.35f).SetEase(Ease.InCubic);
             }
             else if (Input.GetKeyDown(KeyCode.A))
             {
@@ -160,6 +159,10 @@ public class PlanningView : MonoBehaviour
         if (isVisible)
         {
             _cameraMask.DOMoveZ(150, 0.5f).SetEase(Ease.InCubic);
+        }
+        else 
+        {
+            _cameraMask.DOMoveZ(2000, 0.35f).SetEase(Ease.InCubic);
         }
     }
 }

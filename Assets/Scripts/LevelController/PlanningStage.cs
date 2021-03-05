@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEngine;
 
 public class PlanningStage : MonoBehaviour
@@ -98,6 +99,14 @@ public class PlanningStage : MonoBehaviour
     {
         if (_isPlanningEnabled)
         {
+            foreach (var replay in _replays)
+            {
+                if (replay.Character != null)
+                {
+                    replay.Character.CharacterMovement.Freeze();
+                }
+            }
+
             var item = new TurnInfo();
             item.History = history;
             item.CharacterType = _characterType;
