@@ -14,7 +14,7 @@ public enum CharacterType
 public class BaseCharacter : MonoBehaviour
 {
 
-    public CharacterMovement CharacterMovement { get; private set; }
+    public CharacterMovementBase CharacterMovement { get; private set; }
     public bool IsDead { get; private set; }
 
     public CharacterType Type;
@@ -23,7 +23,7 @@ public class BaseCharacter : MonoBehaviour
 
     void Awake()
     {
-        CharacterMovement = GetComponent<CharacterMovement>();
+        CharacterMovement = GetComponent<CharacterMovementBase>();
     }
 
     public virtual void UseAbility()

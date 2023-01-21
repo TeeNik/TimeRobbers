@@ -18,6 +18,8 @@ public class InputController : MonoBehaviour
         Right = 2,
         Jump = 4,
         Ability = 8,
+        Up = 16,
+        Down = 32,
     }
 
     private readonly List<KeyValuePair<float, Action>> _history = new List<KeyValuePair<float, Action>>();

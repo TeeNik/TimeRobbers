@@ -12,7 +12,7 @@ public class PlanningStage : MonoBehaviour
 
     private class ReplayInfo
     {
-        public float Speed;
+        public Vector2 Speed;
         public BaseCharacter Character;
         public int TurnIndex;
     }

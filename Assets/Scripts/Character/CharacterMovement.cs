@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterMovement : MonoBehaviour
+public class CharacterMovement : CharacterMovementBase
 {
     [SerializeField] private float _jumpForce = 700f;
     [Range(0, .3f)] [SerializeField] private float _movementSmoothing = .05f;
@@ -23,38 +23,18 @@ public class CharacterMovement : MonoBehaviour
     private Animator _animator;
     private bool _isDead;
 
-    private void Awake()
-    {
-        _rigidbody2D = GetComponent<Rigidbody2D>();
-        _animator = GetComponent<Animator>();
-    }
-
-
-    private void FixedUpdate()
-    {
-        _grounded = _groundCollider.IsTouchingGround;
-        //_grounded = false;
-        //
-        //Collider2D[] colliders = Physics2D.OverlapCircleAll(_groundCheck.position, _groundedRadius, _whatIsGround);
-        //for (int i = 0; i < colliders.Length; i++)
-        //{
-        //    if (colliders[i].gameObject != gameObject)
-        //        _grounded = true;
-        //}
-    }
-
-    public void Move(float move, bool jump)
+    public override void Move(Vector2 move, bool jump)
     {
         if (!_isDead)
         {
-            _animator.SetBool("IsRunning", move != 0);
+            _animator.SetBool("IsRunning", move.x != 0);
             _animator.SetBool("IsInAir", !_grounded);
 
             if (_grounded || _airControl)
             {
-                Vector3 targetVelocity = new Vector2(move * 10f, _rigidbody2D.velocity.y);
+                Vector3 targetVelocity = new Vector2(move.x * 10f, _rigidbody2D.velocity.y);
                 _rigidbody2D.velocity = Vector3.SmoothDamp(_rigidbody2D.velocity, targetVelocity, ref _velocity, _movementSmoothing);
-                if (move > 0 && !_facingRight || move < 0 && _facingRight)
+                if (move.x > 0 && !_facingRight || move.x < 0 && _facingRight)
                 {
                     Flip();
                 }
@@ -67,9 +47,33 @@ public class CharacterMovement : MonoBehaviour
         }
     }
 
-    public void AddJumpForce(float multiplier)
+    public override void AddJumpForce(float multiplier) 
     {
         _rigidbody2D.AddForce(new Vector2(0f, _jumpForce * multiplier));
+    }
+
+    private void Awake()
+    {
+        _rigidbody2D = GetComponent<Rigidbody2D>();
+        _animator = GetComponent<Animator>();
+    }
+
+    public override void Freeze()
+    {
+        StopMovement();
+        _animator.speed = 0;
+    }
+
+    public override void PlayDieAnimation()
+    {
+        _isDead = true;
+        StopMovement();
+        _animator.SetTrigger("Death");
+    }
+
+    private void FixedUpdate()
+    {
+        _grounded = _groundCollider.IsTouchingGround;
     }
 
     private void Flip()
@@ -80,34 +84,21 @@ public class CharacterMovement : MonoBehaviour
         transform.localScale = newScale;
     }
 
-    public float ActionToSpeed(InputController.Action action)
+    public override Vector2 ActionToSpeed(InputController.Action action)
     {
-        var horizontalMove = 0f;
+        Vector2 speed = Vector2.zero;
         if (action.HasFlag(InputController.Action.Left))
         {
-            horizontalMove -= _runSpeed;
+            speed.x -= _runSpeed;
         }
         if (action.HasFlag(InputController.Action.Right))
         {
-            horizontalMove += _runSpeed;
+            speed.x += _runSpeed;
         }
-        return horizontalMove;
+        return speed;
     }
 
-    public void Freeze()
-    {
-        StopMovement();
-        _animator.speed = 0;
-    }
-
-    public void PlayDieAnimation()
-    {
-        _isDead = true;
-        StopMovement();
-        _animator.SetTrigger("Death");
-    }
-
-    void StopMovement()
+    private void StopMovement()
     {
         _rigidbody2D.gravityScale = 0;
         _rigidbody2D.velocity = Vector2.zero;
