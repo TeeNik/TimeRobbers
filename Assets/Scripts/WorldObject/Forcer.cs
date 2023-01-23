@@ -95,7 +95,7 @@ public class Forcer : MonoBehaviour
         if (_target != null && _target.gameObject.activeSelf)
         {
             _target.transform.parent = null;
-            var character = _target.GetComponent<CharacterMovement>();
+            var character = _target.GetComponent<CharacterMovementBase>();
             //Debug.Log("Force applied: " + _force);
             character.AddJumpForce(_force);
             _target = null;
