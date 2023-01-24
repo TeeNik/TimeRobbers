@@ -39,7 +39,15 @@ public class InputController : MonoBehaviour
             {
                 _action |= Action.Right;
             }
-            if (!_action.HasFlag(Action.Jump) && Input.GetKeyDown(KeyCode.W))
+            if (!_action.HasFlag(Action.Up) && Input.GetKey(KeyCode.W))
+            {
+                _action |= Action.Up;
+            }
+            if (!_action.HasFlag(Action.Down) && Input.GetKey(KeyCode.S))
+            {
+                _action |= Action.Down;
+            }
+            if (!_action.HasFlag(Action.Jump) && Input.GetKeyDown(KeyCode.Space))
             {
                 _action |= Action.Jump;
             }

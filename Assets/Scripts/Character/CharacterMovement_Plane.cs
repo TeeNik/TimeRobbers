@@ -30,8 +30,7 @@ public class CharacterMovement_Plane : CharacterMovementBase
         {
             _animator.SetBool("IsRunning", move.x != 0);
 
-            Vector3 targetVelocity = new Vector2(move.x * 10f, _rigidbody2D.velocity.y);
-            _rigidbody2D.velocity = Vector3.SmoothDamp(_rigidbody2D.velocity, targetVelocity, ref _velocity, _movementSmoothing);
+            _rigidbody2D.velocity = move * 10.0f;
             if (move.x > 0 && !_facingRight || move.x < 0 && _facingRight)
             {
                 Flip();
@@ -64,11 +63,11 @@ public class CharacterMovement_Plane : CharacterMovementBase
         }
         if (action.HasFlag(InputController.Action.Up))
         {
-            speed.y -= _runSpeed;
+            speed.y += _runSpeed;
         }
         if (action.HasFlag(InputController.Action.Down))
         {
-            speed.y += _runSpeed;
+            speed.y -= _runSpeed;
         }
         return speed;
     }
